@@ -3,11 +3,11 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
 
+dotenv.config();
+
 import authRoutes from './routes/authRoutes';
 import taskRoutes from './routes/taskRoutes';
 import authMiddleware from './middlewares/authMiddleware';
-
-dotenv.config();
 
 const app = express();
 app.use(cors());

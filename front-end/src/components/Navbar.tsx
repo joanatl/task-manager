@@ -5,7 +5,7 @@ export const Navbar = () => {
   const { token, logout } = useAuth();
 
   return (
-    <nav className="bg-indigo-600 text-white p-4 shadow-md">
+    <nav className="bg-zinc-800 text-blue-300 p-4 shadow-md">
       <div className="container mx-auto flex justify-between items-center">
         <div className="flex space-x-4 items-center">
           <Link to="/dashboard" className="text-xl font-bold hover:text-gray-200">
@@ -19,7 +19,7 @@ export const Navbar = () => {
         {token && (
           <button
             onClick={logout}
-            className="bg-red-500 hover:bg-red-600 px-3 py-1 rounded text-sm"
+            className="bg-blue-300 hover:bg-red-600 px-3 py-1 rounded text-white"
           >
             Sair
           </button>

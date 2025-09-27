@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthProvider';
+import axios from 'axios';
 
 export default function Register() {
-  console.log("Componente Register carregado");
-
   const { register } = useAuth();
   const navigate = useNavigate();
 
@@ -15,28 +14,35 @@ export default function Register() {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Formulário enviado")
     if (password !== confirm) {
-      console.log("Senhas não coincidem")
       setError('As senhas não coincidem');
       return;
     }
 
     try {
-      console.log("Chamando reggister")
       await register(email, password);
-      console.log("Registro bem sucedido")
       navigate('/dashboard');
-    } catch (err) {
-      console.log(err)
-      setError('Erro ao registrar. Verifique os dados e tente novamente.');
+    } catch (err: any) {
+      console.log("Erro no registro:", err);
+
+      if (axios.isAxiosError(err)) {
+        const backendError = err.response?.data?.error;
+
+        if (backendError === 'EMAIL_ALREADY_EXISTS') {
+          setError('Este email já está cadastrado.');
+        } else {
+          setError('Erro ao registrar. Tente novamente.');
+        }
+      } else {
+        setError('Erro inesperado. Tente novamente.');
+      }
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-900 px-4">
       <div className="bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h1 className="text-3xl font-bold mb-6 text-center text-orange-400">Criar Conta</h1>
+        <h1 className="text-3xl font-bold mb-6 text-center text-white">Criar Conta</h1>
 
         {error && (
           <div className="bg-red-500 text-white p-2 mb-4 rounded text-center">
@@ -52,7 +58,7 @@ export default function Register() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full p-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-400"
+              className="w-full p-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-grey-800"
             />
           </div>
 
@@ -63,7 +69,7 @@ export default function Register() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full p-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-400"
+              className="w-full p-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-white"
             />
           </div>
 
@@ -74,13 +80,13 @@ export default function Register() {
               value={confirm}
               onChange={(e) => setConfirm(e.target.value)}
               required
-              className="w-full p-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-400"
+              className="w-full p-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-white"
             />
           </div>
 
           <button
             type="submit"
-            className="w-full py-2 bg-black text-orange-400 rounded hover:bg-gray-950 transition"
+            className="w-full py-2 bg-black text-white rounded hover:bg-gray-950 transition"
           >
             Registrar
           </button>
@@ -88,7 +94,7 @@ export default function Register() {
 
         <p className="mt-4 text-center text-sm text-gray-400">
           Já tem uma conta?{' '}
-          <a href="/login" className="text-orange-400 hover:underline">
+          <a href="/login" className="text-white hover:underline">
             Entrar
           </a>
         </p>

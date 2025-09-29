@@ -1,4 +1,4 @@
-import { BrowserRouter as Routes, Route, Navigate, BrowserRouter } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import Login from './auth/Login';
 import Register from './auth/Register';
 import Dashboard from './pages/Dashboard';
@@ -17,7 +17,6 @@ function PrivateRoute({ children }: { children: JSX.Element }) {
 
 function App() {
   return (
-    <BrowserRouter>
     <AuthProvider>
       <Navbar />
       <Routes>
@@ -28,7 +27,6 @@ function App() {
         <Route path="/about" element={<About />} />
       </Routes>
     </AuthProvider>
-    </BrowserRouter>
   );
 }
 

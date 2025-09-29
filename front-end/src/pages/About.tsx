@@ -1,5 +1,3 @@
-import React from 'react';
-
 export default function About() {
   return (
     <div className="max-w-2xl mx-auto mt-9 p-9 bg-gray-800 rounded shadow text-white">

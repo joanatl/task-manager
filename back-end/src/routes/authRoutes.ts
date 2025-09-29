@@ -1,8 +1,8 @@
 import express, { Request, Response } from 'express';
 import User from '../models/User';
 import jwt from 'jsonwebtoken';
-import mongoose, { Document, Schema } from 'mongoose';
-import bcrypt from 'bcryptjs';
+import mongoose, { Document } from 'mongoose';
+
 
 export interface IUser extends Document {
   _id: mongoose.Types.ObjectId;

@@ -1,31 +1,32 @@
-import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
+import { Request, Response, NextFunction } from "express";
+import jwt from "jsonwebtoken";
 
-interface JwPayload {
-    id: string;
+interface DecodedToken {
+  id: string;
 }
 
-declare global {
-    namespace Express {
-        interface Request {
-            userId?: string;
-        }
-    }
+export interface AuthRequest extends Request {
+  userId?: string;
 }
 
-const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
+const auth = (req: AuthRequest, res: Response, next: NextFunction) => {
+  try {
     const authHeader = req.headers.authorization;
-    const token = authHeader?.split(' ')[1];
 
-    if (!token) return res.status(401).json({ msg: 'Token não fornecido'});
-
-    try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JwPayload;
-        req.userId = decoded.id;
-        next();
-    }   catch (err) {
-        return res.status(401).json({ msg: 'Token inválido'});
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({ success: false, message: "NO_TOKEN" });
     }
+
+    const token = authHeader.split(" ")[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as DecodedToken;
+
+    req.userId = decoded.id; 
+
+    next();
+  } catch (err) {
+    console.error("Erro no middleware de auth:", err);
+    return res.status(401).json({ success: false, message: "INVALID_TOKEN" });
+  }
 };
 
-export default authMiddleware;
+export default auth;

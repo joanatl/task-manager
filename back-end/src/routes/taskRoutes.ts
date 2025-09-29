@@ -1,17 +1,18 @@
-import express, { Request, Response } from 'express';
+import express, { Response } from 'express';
 import Task from '../models/Task';
+import { AuthRequest } from '../middlewares/authMiddleware';
 
 const router = express.Router();
 
 // -------------------- CREATE --------------------
-router.post('/', async (req: Request, res: Response) => {
+router.post('/', async (req: AuthRequest, res: Response) => {
   try {
-    const { title } = req.body;
+    const { title, description } = req.body;
     if (!title) {
       return res.status(400).json({ success: false, message: 'TITLE_REQUIRED' });
     }
 
-    const task = await Task.create({ title, user: req.userId });
+    const task = await Task.create({ title, description, user: req.userId });
     return res.json({ success: true, message: 'TASK_CREATED', data: task });
   } catch (err) {
     console.error(err);
@@ -20,7 +21,7 @@ router.post('/', async (req: Request, res: Response) => {
 });
 
 // -------------------- GET ALL --------------------
-router.get('/', async (req: Request, res: Response) => {
+router.get('/', async (req: AuthRequest, res: Response) => {
   try {
     const tasks = await Task.find({ user: req.userId });
     return res.json({ success: true, message: 'TASKS_FETCHED', data: tasks });
@@ -31,7 +32,7 @@ router.get('/', async (req: Request, res: Response) => {
 });
 
 // -------------------- UPDATE --------------------
-router.put('/:id', async (req: Request, res: Response) => {
+router.put('/:id', async (req: AuthRequest, res: Response) => {
   try {
     const task = await Task.findOneAndUpdate(
       { _id: req.params.id, user: req.userId },
@@ -51,7 +52,7 @@ router.put('/:id', async (req: Request, res: Response) => {
 });
 
 // -------------------- DELETE --------------------
-router.delete('/:id', async (req: Request, res: Response) => {
+router.delete('/:id', async (req: AuthRequest, res: Response) => {
   try {
     const task = await Task.findOneAndDelete({ _id: req.params.id, user: req.userId });
     if (!task) {
@@ -66,4 +67,3 @@ router.delete('/:id', async (req: Request, res: Response) => {
 });
 
 export default router;
-
